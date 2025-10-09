@@ -1,4 +1,4 @@
-# ABOUTME: Shell script testing workflow
+# ABOUTME: Shell script testing workflow - template for custom test execution
 name: Run Tests
 
 on:

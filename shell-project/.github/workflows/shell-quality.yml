@@ -1,4 +1,4 @@
-# ABOUTME: Shell script quality checks (ShellCheck + shfmt)
+# ABOUTME: Shell script quality checks (ShellCheck + shfmt) using centralized reusable workflow
 name: Shell Quality
 
 on:
@@ -8,32 +8,11 @@ on:
       - main
 
 jobs:
-  shellcheck:
-    name: ShellCheck
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Run ShellCheck
-        uses: ludeeus/action-shellcheck@master
-        with:
-          severity: warning
-          # TODO: Add ignore_paths if needed
-          # ignore_paths: tests/mocks
-
-  shfmt:
-    name: Shell Format Check
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Install shfmt
-        run: |
-          wget -O shfmt https://github.com/mvdan/sh/releases/download/v3.7.0/shfmt_v3.7.0_linux_amd64
-          chmod +x shfmt
-          sudo mv shfmt /usr/local/bin/
-
-      - name: Check formatting
-        run: |
-          # TODO: Customize paths to your shell scripts
-          shfmt -d -i 4 -ci -sr *.sh
+  quality:
+    uses: maxrantil/.github/.github/workflows/shell-quality-reusable.yml@main
+    with:
+      shellcheck-severity: 'warning'
+      # TODO: Add ignore_paths if needed
+      # shellcheck-ignore-paths: 'tests/mocks'
+      # TODO: Customize paths to your shell scripts
+      # shfmt-paths: '**/*.sh'  # Default: finds all .sh files

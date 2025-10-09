@@ -1,4 +1,4 @@
-# ABOUTME: Ensures session handoff documentation exists (per CLAUDE.md Section 5)
+# ABOUTME: Ensures session handoff documentation exists (per CLAUDE.md Section 5) using centralized reusable workflow
 name: Verify Session Handoff
 
 on:
@@ -10,72 +10,6 @@ on:
 
 jobs:
   check-handoff:
-    name: Check Session Handoff Documentation
-    runs-on: ubuntu-latest
-    # Only run when PR is marked as ready (not draft)
-    if: github.event.pull_request.draft == false
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-
-      - name: Verify session handoff exists
-        run: |
-          echo "Checking for session handoff documentation..."
-          echo ""
-
-          # Detect default branch
-          if git rev-parse --verify origin/main >/dev/null 2>&1; then
-            BASE_BRANCH="origin/main"
-          else
-            BASE_BRANCH="origin/master"
-          fi
-
-          # Check if SESSION_HANDOVER.md was updated in this PR
-          if git diff --name-only $BASE_BRANCH..HEAD | grep -q "SESSION_HANDOVER.md"; then
-            echo "✅ Session handoff documentation found: SESSION_HANDOVER.md updated"
-            echo ""
-            echo "Verifying handoff content..."
-
-            # Check if the file has meaningful content (not just created empty)
-            if [[ $(wc -l < SESSION_HANDOVER.md) -lt 10 ]]; then
-              echo "⚠️  WARNING: SESSION_HANDOVER.md seems too short (< 10 lines)"
-              echo "Expected: Comprehensive handoff with context, next steps, and startup prompt"
-            else
-              echo "✅ Handoff document has substantial content"
-            fi
-
-            exit 0
-          fi
-
-          # Check for dated session handoff files
-          if git diff --name-only $BASE_BRANCH..HEAD | grep -E "docs/implementation/SESSION.*\.md"; then
-            echo "✅ Session handoff documentation found: Dated session file"
-            exit 0
-          fi
-
-          # No handoff found - fail the check
-          echo "❌ ERROR: No session handoff documentation detected"
-          echo ""
-          echo "Per CLAUDE.md Section 5: Session handoff is MANDATORY after:"
-          echo "  • Completing any GitHub issue"
-          echo "  • Merging any PR"
-          echo "  • Completing any phase/milestone"
-          echo "  • Ending any work session"
-          echo ""
-          echo "Expected files (one of):"
-          echo "  • SESSION_HANDOVER.md (recommended - living document)"
-          echo "  • docs/implementation/SESSION-HANDOFF-[issue]-[date].md"
-          echo ""
-          echo "A proper handoff should include:"
-          echo "  • What was completed"
-          echo "  • Current project state"
-          echo "  • Agent validation status"
-          echo "  • Next session priorities"
-          echo "  • Startup prompt for next session"
-          echo ""
-          echo "This is a FAILURE - session handoff is MANDATORY per CLAUDE.md"
-
-          # Exit with failure (blocks PR)
-          exit 1
+    uses: maxrantil/.github/.github/workflows/session-handoff-check-reusable.yml@main
+    with:
+      base-branch: 'master'  # TODO: Change to 'main' if using main branch
