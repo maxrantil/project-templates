@@ -1,17 +1,60 @@
 # ABOUTME: Pre-commit hooks configuration for shell projects
-# TODO: Populate with actual pre-commit hooks from existing repos
+# ABOUTME: Ensures code quality, shell script linting, and policy compliance
 
 repos:
+  # General file checks
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v4.5.0
+    rev: v4.4.0
     hooks:
       - id: trailing-whitespace
       - id: end-of-file-fixer
+      - id: check-yaml
+      - id: check-added-large-files
+        args: ['--maxkb=500']
+      - id: check-case-conflict
+      - id: check-merge-conflict
       - id: check-executables-have-shebangs
       - id: check-shebang-scripts-are-executable
 
-  # TODO: Add shellcheck hook from existing configuration
+  # Shell script linting
   - repo: https://github.com/shellcheck-py/shellcheck-py
     rev: v0.9.0.6
     hooks:
       - id: shellcheck
+        # TODO: Adjust exclusions as needed
+        args: ['-e', 'SC1091', '-e', 'SC2034', '-e', 'SC2155']
+        types: [shell]
+
+  # Policy enforcement hooks
+  - repo: local
+    hooks:
+      - id: shell-syntax-check
+        name: Shell syntax validation
+        entry: bash -c 'for script in *.sh; do if [ -f "$script" ]; then bash -n "$script" || exit 1; fi; done'
+        language: system
+        pass_filenames: false
+
+      - id: no-ai-attribution
+        name: Block AI/Agent Attribution in Commits
+        entry: bash -c 'if git diff --cached --diff-filter=ACMR -- ":(exclude).github/" ":(exclude).pre-commit-config.yaml" ":(exclude).gitignore" ":(exclude)docs/" ":(exclude)SESSION_HANDOFF.md" ":(exclude)*HANDOFF*.md" ":(exclude)*SESSION*.md" | grep -iE "(Co-authored-by|Generated with|Claude|AI-generated|Created by Claude|(reviewed by|validated by|approved by|checked by).*(agent|architecture-designer|security-validator|performance-optimizer)|agent (review|validation|approval))"; then echo "❌ ERROR: Remove AI/agent attribution from commits (per CLAUDE.md)"; exit 1; fi'
+        language: system
+        stages: [pre-commit]
+
+      - id: conventional-commit-msg
+        name: Enforce Conventional Commit Format
+        entry: python3 -c
+        language: system
+        stages: [commit-msg]
+        args:
+          - |
+            import sys, re
+            with open(sys.argv[1]) as f:
+                msg = f.read().strip()
+            pattern = r'^(feat|fix|docs|style|refactor|test|chore|perf|ci|build|revert)(\(.+\))?!?: .+'
+            if not re.match(pattern, msg):
+                print('❌ ERROR: Use conventional commit format')
+                print('Examples:')
+                print('  feat(script): add new functionality')
+                print('  fix(install): resolve permission issue')
+                print('  docs: update usage guide')
+                sys.exit(1)

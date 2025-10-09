@@ -1,0 +1,45 @@
+# ABOUTME: Validates all commit messages follow conventional commit format
+name: Commit Format
+
+on:
+  pull_request:
+    branches:
+      - master
+      - main
+
+jobs:
+  check-commit-format:
+    name: Check Conventional Commits
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Validate commit messages
+        run: |
+          # Detect default branch
+          if git rev-parse --verify origin/main >/dev/null 2>&1; then
+            BASE_BRANCH="origin/main"
+          else
+            BASE_BRANCH="origin/master"
+          fi
+
+          COMMITS=$(git log $BASE_BRANCH..HEAD --format=%s)
+
+          while IFS= read -r commit; do
+            if [[ "$commit" =~ ^Merge ]]; then
+              continue
+            fi
+
+            if ! [[ "$commit" =~ ^(feat|fix|docs|style|refactor|test|chore|perf|ci|build|revert)(\(.+\))?!?:\ .+ ]]; then
+              echo "❌ Invalid commit message: $commit"
+              echo ""
+              echo "Use: type(scope): description"
+              echo "Types: feat, fix, docs, style, refactor, test, chore, perf, ci, build, revert"
+              exit 1
+            fi
+          done <<< "$COMMITS"
+
+          echo "✅ All commit messages valid"

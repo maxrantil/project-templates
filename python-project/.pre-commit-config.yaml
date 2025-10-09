@@ -1,11 +1,54 @@
 # ABOUTME: Pre-commit hooks configuration for Python projects
-# TODO: Populate with actual pre-commit hooks from existing repos
+# ABOUTME: Ensures code quality, formatting, and policy compliance
 
 repos:
-  # TODO: Add repos from existing configuration
+  # General file checks
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v4.5.0
+    rev: v4.4.0
     hooks:
       - id: trailing-whitespace
       - id: end-of-file-fixer
       - id: check-yaml
+      - id: check-added-large-files
+        args: ['--maxkb=500']
+      - id: check-case-conflict
+      - id: check-merge-conflict
+      - id: check-executables-have-shebangs
+      - id: check-shebang-scripts-are-executable
+
+  # TODO: Add Python-specific hooks (ruff, mypy, etc.)
+  # Example:
+  # - repo: https://github.com/astral-sh/ruff-pre-commit
+  #   rev: v0.1.6
+  #   hooks:
+  #     - id: ruff
+  #       args: [--fix]
+  #     - id: ruff-format
+
+  # Policy enforcement hooks
+  - repo: local
+    hooks:
+      - id: no-ai-attribution
+        name: Block AI/Agent Attribution in Commits
+        entry: bash -c 'if git diff --cached --diff-filter=ACMR -- ":(exclude).github/" ":(exclude).pre-commit-config.yaml" ":(exclude).gitignore" ":(exclude)docs/" ":(exclude)SESSION_HANDOFF.md" ":(exclude)*HANDOFF*.md" ":(exclude)*SESSION*.md" | grep -iE "(Co-authored-by|Generated with|Claude|AI-generated|Created by Claude|(reviewed by|validated by|approved by|checked by).*(agent|architecture-designer|security-validator|performance-optimizer)|agent (review|validation|approval))"; then echo "❌ ERROR: Remove AI/agent attribution from commits (per CLAUDE.md)"; exit 1; fi'
+        language: system
+        stages: [pre-commit]
+
+      - id: conventional-commit-msg
+        name: Enforce Conventional Commit Format
+        entry: python3 -c
+        language: system
+        stages: [commit-msg]
+        args:
+          - |
+            import sys, re
+            with open(sys.argv[1]) as f:
+                msg = f.read().strip()
+            pattern = r'^(feat|fix|docs|style|refactor|test|chore|perf|ci|build|revert)(\(.+\))?!?: .+'
+            if not re.match(pattern, msg):
+                print('❌ ERROR: Use conventional commit format')
+                print('Examples:')
+                print('  feat(api): add new endpoint')
+                print('  fix(auth): resolve token issue')
+                print('  docs: update README')
+                sys.exit(1)

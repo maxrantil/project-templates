@@ -1,4 +1,4 @@
-# ABOUTME: Python CI workflow - runs tests with pytest
+# ABOUTME: Shell script testing workflow
 name: Run Tests
 
 on:
@@ -15,18 +15,18 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.11'  # TODO: Customize Python version
-
       - name: Install dependencies
         run: |
-          pip install -e ".[dev]"
+          sudo apt-get update
+          # TODO: Add any required dependencies
+          # Example: sudo apt-get install -y specific-tool
 
       - name: Run all tests
         run: |
-          pytest --cov --cov-report=term-missing
+          # TODO: Adapt to your test framework
+          # Example: cd tests && ./run_tests.sh
+          echo "TODO: Configure test execution"
+          exit 1
 
       - name: Verify tests passed
         run: |
