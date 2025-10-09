@@ -1,0 +1,21 @@
+# ABOUTME: ShellCheck linting workflow for shell scripts
+# TODO: Populate with actual shellcheck configuration from existing repos
+
+name: ShellCheck
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+    branches: [main, master]
+
+jobs:
+  # TODO: Add jobs from existing repos
+  shellcheck:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run ShellCheck
+        uses: ludeeus/action-shellcheck@master
+        with:
+          scandir: '.'

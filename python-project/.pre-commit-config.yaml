@@ -1,0 +1,11 @@
+# ABOUTME: Pre-commit hooks configuration for Python projects
+# TODO: Populate with actual pre-commit hooks from existing repos
+
+repos:
+  # TODO: Add repos from existing configuration
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.5.0
+    hooks:
+      - id: trailing-whitespace
+      - id: end-of-file-fixer
+      - id: check-yaml

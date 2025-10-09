@@ -1,0 +1,29 @@
+# ABOUTME: Python project configuration with build system and tool settings
+# TODO: Customize for specific project needs
+
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "PROJECT_NAME"
+version = "0.1.0"
+description = "PROJECT_DESCRIPTION"
+authors = [
+    {name = "YOUR_NAME", email = "YOUR_EMAIL"}
+]
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    # Add project dependencies
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.4.0",
+    "pytest-cov>=4.1.0",
+    "pre-commit>=3.5.0",
+    # TODO: Add dev dependencies from existing repos
+]
+
+# TODO: Add tool configurations (ruff, mypy, pytest) from existing repos

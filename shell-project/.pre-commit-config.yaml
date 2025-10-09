@@ -1,0 +1,17 @@
+# ABOUTME: Pre-commit hooks configuration for shell projects
+# TODO: Populate with actual pre-commit hooks from existing repos
+
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.5.0
+    hooks:
+      - id: trailing-whitespace
+      - id: end-of-file-fixer
+      - id: check-executables-have-shebangs
+      - id: check-shebang-scripts-are-executable
+
+  # TODO: Add shellcheck hook from existing configuration
+  - repo: https://github.com/shellcheck-py/shellcheck-py
+    rev: v0.9.0.6
+    hooks:
+      - id: shellcheck

@@ -1,0 +1,16 @@
+# ABOUTME: Gitignore for project-templates repository itself
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Local testing
+.test/
+temp/
