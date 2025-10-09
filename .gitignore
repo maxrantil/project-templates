@@ -1,5 +1,12 @@
 # ABOUTME: Gitignore for project-templates repository itself
 
+# Development workflow files (keep local)
+CLAUDE.md
+AGENT_FEEDBACK.md
+AGENT_REVIEW.md
+SESSION_HANDOVER.md
+docs/implementation/
+
 # OS files
 .DS_Store
 Thumbs.db
