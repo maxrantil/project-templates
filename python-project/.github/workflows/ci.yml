@@ -1,4 +1,4 @@
-# ABOUTME: Python CI workflow - runs tests with pytest
+# ABOUTME: Python CI workflow - runs tests using centralized reusable workflow
 name: Run Tests
 
 on:
@@ -9,28 +9,9 @@ on:
 
 jobs:
   test:
-    name: Run Test Suite
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.11'  # TODO: Customize Python version
-
-      - name: Install dependencies
-        run: |
-          pip install -e ".[dev]"
-
-      - name: Run all tests
-        run: |
-          pytest --cov --cov-report=term-missing
-
-      - name: Verify tests passed
-        run: |
-          echo "✅ All tests passed successfully"
-          echo ""
-          echo "Per CLAUDE.md Section 3: TDD is MANDATORY"
-          echo "All features must have tests before merging"
+    uses: maxrantil/.github/.github/workflows/python-test-reusable.yml@master
+    with:
+      python-version: '3.11'  # TODO: Customize Python version
+      # Default: uv sync (per CLAUDE.md UV mandate)
+      # If using pip instead: install-command: 'pip install -e ".[dev]"'
+      # If using pytest without uv: test-command: 'pytest --cov --cov-report=term-missing'

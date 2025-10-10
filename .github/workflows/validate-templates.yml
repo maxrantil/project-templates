@@ -1,0 +1,196 @@
+# ABOUTME: Validates project templates for syntax errors and consistency
+name: Validate Templates
+
+on:
+  pull_request:
+    branches:
+      - master
+      - main
+  push:
+    branches:
+      - master
+      - main
+
+jobs:
+  validate-python-template:
+    name: Validate Python Template
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install yamllint
+        run: pip install yamllint
+
+      - name: Validate workflow YAML syntax
+        run: |
+          echo "Validating Python template workflows..."
+          for workflow in python-project/.github/workflows/*.yml; do
+            echo "✓ Validating $workflow"
+            yamllint -d "{extends: default, rules: {line-length: {max: 120}}}" "$workflow"
+          done
+
+      - name: Check pyproject.toml syntax
+        run: |
+          pip install tomli
+          python -c "import tomli; tomli.load(open('python-project/pyproject.toml', 'rb'))" && echo "✓ pyproject.toml is valid"
+
+      - name: Validate pre-commit config
+        run: |
+          pip install pre-commit
+          cd python-project
+          pre-commit validate-config && echo "✓ pre-commit config is valid"
+
+      - name: Check for standalone workflows (should use reusables)
+        run: |
+          echo "Checking for direct job definitions in workflows..."
+          cd python-project/.github/workflows
+
+          # These workflows should use reusable workflows
+          reusable_workflows="block-ai-attribution pr-title-check pre-commit-validation protect-master"
+
+          for workflow in $reusable_workflows; do
+            if [ -f "${workflow}.yml" ]; then
+              if grep -q "runs-on:" "${workflow}.yml"; then
+                echo "⚠️  WARNING: ${workflow}.yml has direct job definition (should use 'uses:' for reusable workflow)"
+                echo "Expected pattern: uses: maxrantil/.github/.github/workflows/..."
+              else
+                echo "✓ ${workflow}.yml correctly uses reusable workflow"
+              fi
+            fi
+          done
+
+  validate-shell-template:
+    name: Validate Shell Template
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install yamllint
+        run: pip install yamllint
+
+      - name: Validate workflow YAML syntax
+        run: |
+          echo "Validating Shell template workflows..."
+          for workflow in shell-project/.github/workflows/*.yml; do
+            echo "✓ Validating $workflow"
+            yamllint -d "{extends: default, rules: {line-length: {max: 120}}}" "$workflow"
+          done
+
+      - name: Validate pre-commit config
+        run: |
+          pip install pre-commit
+          cd shell-project
+          pre-commit validate-config && echo "✓ pre-commit config is valid"
+
+      - name: Check for shell scripts in template
+        run: |
+          if ls shell-project/*.sh 1> /dev/null 2>&1; then
+            echo "Found shell scripts in template, running shellcheck..."
+            for script in shell-project/*.sh; do
+              shellcheck "$script" && echo "✓ $script passed shellcheck"
+            done
+          else
+            echo "✓ No shell scripts in template to validate"
+          fi
+
+      - name: Check for standalone workflows (should use reusables)
+        run: |
+          echo "Checking for direct job definitions in workflows..."
+          cd shell-project/.github/workflows
+
+          # These workflows should use reusable workflows
+          reusable_workflows="block-ai-attribution pr-title-check pre-commit-validation protect-master"
+
+          for workflow in $reusable_workflows; do
+            if [ -f "${workflow}.yml" ]; then
+              if grep -q "runs-on:" "${workflow}.yml"; then
+                echo "⚠️  WARNING: ${workflow}.yml has direct job definition (should use 'uses:' for reusable workflow)"
+                echo "Expected pattern: uses: maxrantil/.github/.github/workflows/..."
+              else
+                echo "✓ ${workflow}.yml correctly uses reusable workflow"
+              fi
+            fi
+          done
+
+  validate-consistency:
+    name: Check Template Consistency
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Check both templates have workflow documentation
+        run: |
+          test -f python-project/.github/workflows/README.md || \
+            (echo "❌ ERROR: python-project missing .github/workflows/README.md" && exit 1)
+          test -f shell-project/.github/workflows/README.md || \
+            (echo "❌ ERROR: shell-project missing .github/workflows/README.md" && exit 1)
+          echo "✓ Both templates have workflow documentation"
+
+      - name: Check both templates have standard workflows
+        run: |
+          echo "Checking for standard workflows in both templates..."
+
+          # Expected workflows (core set)
+          workflows="ci commit-format verify-session-handoff block-ai-attribution pr-title-check pre-commit-validation protect-master"
+
+          missing=0
+          for workflow in $workflows; do
+            if [ ! -f "python-project/.github/workflows/${workflow}.yml" ]; then
+              echo "⚠️  WARNING: python-project missing ${workflow}.yml"
+              missing=1
+            fi
+            if [ ! -f "shell-project/.github/workflows/${workflow}.yml" ]; then
+              echo "⚠️  WARNING: shell-project missing ${workflow}.yml"
+              missing=1
+            fi
+          done
+
+          if [ $missing -eq 0 ]; then
+            echo "✓ All standard workflows present in both templates"
+          fi
+
+      - name: Verify reusable workflow references use @master
+        run: |
+          echo "Checking that reusable workflows reference @master (not @main)..."
+
+          errors=0
+          for template_dir in python-project shell-project; do
+            if grep -r "@main" "${template_dir}/.github/workflows/" 2>/dev/null | grep "uses:"; then
+              echo "❌ ERROR: Found @main reference in ${template_dir} workflows (should be @master)"
+              errors=1
+            fi
+          done
+
+          if [ $errors -eq 0 ]; then
+            echo "✓ All reusable workflow references use @master"
+          else
+            exit 1
+          fi
+
+      - name: Check for ABOUTME headers in workflows
+        run: |
+          echo "Checking for ABOUTME headers in workflow files..."
+
+          missing=0
+          for workflow in python-project/.github/workflows/*.yml shell-project/.github/workflows/*.yml; do
+            if ! grep -q "# ABOUTME:" "$workflow"; then
+              echo "⚠️  WARNING: $workflow missing ABOUTME header"
+              missing=1
+            fi
+          done
+
+          if [ $missing -eq 0 ]; then
+            echo "✓ All workflows have ABOUTME headers"
+          fi

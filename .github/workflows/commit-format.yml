@@ -1,4 +1,4 @@
-# ABOUTME: Validates all commit messages follow conventional commit format using centralized reusable workflow
+# ABOUTME: Validates all commit messages follow conventional commit format
 name: Commit Format
 
 on:
@@ -11,4 +11,4 @@ jobs:
   check-commit-format:
     uses: maxrantil/.github/.github/workflows/conventional-commit-check-reusable.yml@master
     with:
-      base-branch: 'master'  # TODO: Change to 'main' if using main branch
+      base-branch: 'master'

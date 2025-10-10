@@ -2,9 +2,11 @@
 
 This directory contains automated workflows that enforce project standards and quality requirements.
 
+**Note**: Most workflows use reusable workflow definitions from [maxrantil/.github](https://github.com/maxrantil/.github) repository. This ensures consistent behavior across all projects and simplifies maintenance. Updates to reusable workflows automatically propagate to all projects using them.
+
 ## Workflow Overview
 
-### Pull Request Workflows (Run on every PR to master/main)
+### Pull Request Workflows (Run on every PR to master)
 
 | Workflow | Purpose | Blocks PR? | Runtime |
 |----------|---------|------------|---------|
@@ -15,7 +17,7 @@ This directory contains automated workflows that enforce project standards and q
 | `ci.yml` | Executes full test suite (pytest) | ✅ Yes | ~2min |
 | `pre-commit-validation.yml` | Runs all pre-commit hooks | ✅ Yes | ~45s |
 
-### Push Workflows (Run on pushes to master/main)
+### Push Workflows (Run on pushes to master)
 
 | Workflow | Purpose | Blocks Push? | Runtime |
 |----------|---------|--------------|---------|
@@ -171,8 +173,50 @@ git commit -m "feat(api): add new endpoint"
 2. **Provide helpful error messages** (include examples)
 3. **Document policy changes** (update this README)
 
+## Reusable Workflows
+
+Four workflows in this template use reusable workflow definitions:
+
+### Workflows Using Reusables:
+1. **block-ai-attribution.yml** → Uses `block-ai-attribution-reusable.yml@master`
+2. **pr-title-check.yml** → Uses `pr-title-check-reusable.yml@master`
+3. **pre-commit-validation.yml** → Uses `pre-commit-check-reusable.yml@master`
+4. **protect-master.yml** → Uses `protect-master-reusable.yml@master`
+
+### Benefits:
+- **Automatic Updates**: Improvements in reusable workflows propagate automatically
+- **Consistency**: Same behavior across all projects
+- **Reduced Maintenance**: Update once in `.github` repo, not in every project
+- **Smaller Templates**: 85% code reduction (400 lines → 60 lines)
+
+### Standalone Workflows:
+- **ci.yml** - Project-specific test configuration
+- **commit-format.yml** - Project-specific validation
+- **verify-session-handoff.yml** - Project-specific documentation checks
+
+### Customizing Reusable Workflows:
+
+If you need to customize behavior, you have two options:
+
+**Option 1: Pass Parameters (Recommended)**
+```yaml
+jobs:
+  check-title:
+    uses: maxrantil/.github/.github/workflows/pr-title-check-reusable.yml@master
+    with:
+      custom-pattern: '^(feat|fix|docs).*'  # If workflow supports inputs
+```
+
+**Option 2: Convert to Standalone**
+If customization needs are significant, copy the reusable workflow content locally:
+1. View reusable workflow at: `https://github.com/maxrantil/.github/.github/workflows/[workflow-name]-reusable.yml`
+2. Copy content to local workflow file
+3. Customize as needed
+4. Note: You lose automatic updates
+
 ## Additional Resources
 
 - [Conventional Commits Specification](https://www.conventionalcommits.org/)
 - [GitHub Actions Documentation](https://docs.github.com/en/actions)
+- [Reusable Workflows Documentation](https://github.com/maxrantil/.github)
 - [Project Guidelines: CLAUDE.md](../../CLAUDE.md)

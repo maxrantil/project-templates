@@ -1,4 +1,4 @@
-# ABOUTME: Ensures session handoff documentation exists (per CLAUDE.md Section 5) using centralized reusable workflow
+# ABOUTME: Ensures session handoff documentation exists (per CLAUDE.md Section 5)
 name: Verify Session Handoff
 
 on:
@@ -12,4 +12,4 @@ jobs:
   check-handoff:
     uses: maxrantil/.github/.github/workflows/session-handoff-check-reusable.yml@master
     with:
-      base-branch: 'master'  # TODO: Change to 'main' if using main branch
+      base-branch: 'master'
