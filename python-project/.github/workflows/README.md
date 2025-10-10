@@ -4,7 +4,7 @@ This directory contains automated workflows that enforce project standards and q
 
 ## Workflow Overview
 
-### Pull Request Workflows (Run on every PR to master/main)
+### Pull Request Workflows (Run on every PR to master)
 
 | Workflow | Purpose | Blocks PR? | Runtime |
 |----------|---------|------------|---------|
@@ -15,7 +15,7 @@ This directory contains automated workflows that enforce project standards and q
 | `ci.yml` | Executes full test suite (pytest) | ✅ Yes | ~2min |
 | `pre-commit-validation.yml` | Runs all pre-commit hooks | ✅ Yes | ~45s |
 
-### Push Workflows (Run on pushes to master/main)
+### Push Workflows (Run on pushes to master)
 
 | Workflow | Purpose | Blocks Push? | Runtime |
 |----------|---------|--------------|---------|

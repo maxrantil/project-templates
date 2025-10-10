@@ -2,6 +2,8 @@
 
 This guide covers the recommended GitHub repository settings for projects created from these templates. These settings ensure quality, security, and consistent workflows across all projects.
 
+**🔴 IMPORTANT: This guide assumes you're using `master` as your default branch (not `main`). All instructions reference `master`.**
+
 ## Quick Start
 
 ### Automated Setup (Recommended)
@@ -92,7 +94,14 @@ gh api repos/:owner/:repo/branches/master/protection \
 **Navigate to:** Repository → Settings → General
 
 #### Default Branch
-- Set default branch to `master`
+- Set default branch to `master` (REQUIRED - never use `main`)
+- **Important:** If your repository was created with `main` as default, rename it to `master`:
+  ```bash
+  git branch -m main master
+  git push -u origin master
+  gh repo edit --default-branch master
+  git push origin --delete main
+  ```
 
 #### Pull Requests
 - ✅ **Allow squash merging** (keep clean history on master)

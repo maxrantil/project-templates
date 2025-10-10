@@ -4,7 +4,7 @@ This directory contains automated workflows that enforce project standards and q
 
 ## Workflow Overview
 
-### Pull Request Workflows (Run on every PR to master/main)
+### Pull Request Workflows (Run on every PR to master)
 
 | Workflow | Purpose | Blocks PR? | Runtime |
 |----------|---------|------------|---------|
@@ -12,11 +12,10 @@ This directory contains automated workflows that enforce project standards and q
 | `commit-format.yml` | Validates all commits follow conventional format | ✅ Yes | ~10s |
 | `block-ai-attribution.yml` | Detects AI/agent attribution in commits | ✅ Yes | ~10s |
 | `verify-session-handoff.yml` | Ensures session handoff documentation exists | ✅ Yes | ~8s |
-| `shell-quality.yml` | Runs ShellCheck and shfmt on scripts | ✅ Yes | ~30s |
-| `ci.yml` | Executes full test suite | ✅ Yes | ~2min |
+| `ci.yml` | Executes full test suite (pytest) | ✅ Yes | ~2min |
 | `pre-commit-validation.yml` | Runs all pre-commit hooks | ✅ Yes | ~45s |
 
-### Push Workflows (Run on pushes to master/main)
+### Push Workflows (Run on pushes to master)
 
 | Workflow | Purpose | Blocks Push? | Runtime |
 |----------|---------|--------------|---------|
@@ -116,10 +115,9 @@ pre-commit install
 pre-commit run --all-files
 ```
 
-### 2. Test Shell Scripts:
+### 2. Test Python Code:
 ```bash
-shellcheck *.sh
-shfmt -d -i 4 -ci -sr *.sh
+pytest --cov
 ```
 
 ### 3. Test Commit Format:
@@ -154,14 +152,8 @@ git commit -m "feat(api): add new endpoint"
 - Fix: Create/update `SESSION_HANDOVER.md`
 - Include all required sections (see above)
 
-**Shell Quality Failed:**
-- Fix: Run shellcheck locally: `shellcheck *.sh`
-- Fix: Run shfmt locally: `shfmt -w -i 4 -ci -sr *.sh`
-- Fix issues identified
-- Commit fix and push
-
 **Tests Failed:**
-- Fix: Run tests locally (adapt to your test framework)
+- Fix: Run tests locally: `pytest`
 - Identify failing test
 - Fix code to pass test
 - Commit fix and push
