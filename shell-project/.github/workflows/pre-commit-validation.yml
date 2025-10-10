@@ -9,39 +9,4 @@ on:
 
 jobs:
   run-pre-commit:
-    name: Run Pre-commit Hooks
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.x'
-
-      - name: Install pre-commit
-        run: pip install pre-commit
-
-      - name: Run pre-commit on all files
-        run: |
-          echo "Running pre-commit hooks on changed files..."
-          echo "This catches bypassed hooks (--no-verify usage)"
-
-          # Detect default branch
-          if git rev-parse --verify origin/main >/dev/null 2>&1; then
-            BASE_BRANCH="origin/main"
-          else
-            BASE_BRANCH="origin/master"
-          fi
-
-          # Run pre-commit on all changed files between base branch and HEAD
-          pre-commit run --from-ref $BASE_BRANCH --to-ref HEAD
-
-      - name: Verify compliance
-        run: |
-          echo "✅ All pre-commit hooks passed"
-          echo ""
-          echo "This ensures code quality even if someone used --no-verify locally"
+    uses: maxrantil/.github/.github/workflows/pre-commit-check-reusable.yml@master

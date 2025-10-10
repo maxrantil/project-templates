@@ -1,4 +1,4 @@
-# ABOUTME: Shell script testing workflow
+# ABOUTME: Shell script testing workflow - template for custom test execution
 name: Run Tests
 
 on:
@@ -23,10 +23,11 @@ jobs:
 
       - name: Run all tests
         run: |
-          # TODO: Adapt to your test framework
-          # Example: cd tests && ./run_tests.sh
-          echo "TODO: Configure test execution"
-          exit 1
+          # Run workflow validation script
+          ./validate-workflow.sh
+
+          # Run example script to verify it executes
+          ./example-script.sh
 
       - name: Verify tests passed
         run: |
