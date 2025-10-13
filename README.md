@@ -97,11 +97,56 @@ When you develop new CI patterns across projects:
 3. Extract reusable patterns back to templates
 4. Share improvements across projects
 
+## Template Quality Assurance
+
+All templates are automatically validated on every PR to ensure quality:
+
+### Validation Checks
+
+The `.github/workflows/validate-templates.yml` workflow runs comprehensive checks:
+
+**Python Template Validation:**
+- ✅ YAML syntax validation (yamllint)
+- ✅ pyproject.toml syntax validation
+- ✅ Pre-commit config validation
+- ✅ ABOUTME headers in workflows
+- ✅ Reusable workflow usage verification
+- ✅ Branch reference compliance (@master)
+
+**Shell Template Validation:**
+- ✅ YAML syntax validation (yamllint)
+- ✅ Pre-commit config validation
+- ✅ ShellCheck validation for scripts
+- ✅ ABOUTME headers in workflows
+- ✅ Reusable workflow usage verification
+- ✅ Branch reference compliance (@master)
+
+**Consistency Checks:**
+- ✅ Both templates have workflow documentation (README.md)
+- ✅ Both templates have pre-commit configs
+- ✅ Both templates have README files
+- ✅ Standard workflows present in both templates
+
+### Benefits
+
+- **Fast Feedback**: Issues caught in PR, not when using templates
+- **Quality Guarantee**: Templates always valid and production-ready
+- **Consistency**: Both templates maintain similar structure
+- **Documentation**: Validates required documentation exists
+
 ## Repository Structure
 
 ```
 project-templates/
 ├── README.md                          # This file
+├── .github/workflows/
+│   ├── validate-templates.yml        # Template quality validation
+│   ├── commit-format.yml             # Conventional commits
+│   ├── block-ai-attribution.yml      # No AI attribution
+│   ├── pr-title-check.yml            # PR title validation
+│   ├── pre-commit-validation.yml     # Pre-commit hooks
+│   ├── protect-master.yml            # Master branch protection
+│   └── verify-session-handoff.yml    # Session handoff docs
 ├── python-project/                    # Python template
 │   ├── .github/workflows/
 │   │   ├── ci.yml                    # Uses python-test-reusable
