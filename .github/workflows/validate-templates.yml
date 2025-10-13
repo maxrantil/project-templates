@@ -1,20 +1,26 @@
-# ABOUTME: Validates project templates for syntax errors and consistency
+# ABOUTME: Validates project templates for YAML syntax, configuration validity, and consistency
+
 name: Validate Templates
 
 on:
   pull_request:
-    branches:
-      - master
-      - main
+    branches: [master]
+    paths:
+      - 'python-project/**'
+      - 'shell-project/**'
+      - '.github/workflows/validate-templates.yml'
   push:
-    branches:
-      - master
-      - main
+    branches: [master]
+    paths:
+      - 'python-project/**'
+      - 'shell-project/**'
+      - '.github/workflows/validate-templates.yml'
 
 jobs:
   validate-python-template:
     name: Validate Python Template
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     permissions:
       contents: read
 
@@ -22,27 +28,40 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Install yamllint
-        run: pip install yamllint
+      - name: Install validation tools
+        run: |
+          pip install --quiet yamllint tomli pre-commit
+          echo "✓ Installed validation tools: yamllint, tomli, pre-commit"
 
       - name: Validate workflow YAML syntax
         run: |
           echo "Validating Python template workflows..."
+          errors=0
           for workflow in python-project/.github/workflows/*.yml; do
-            echo "✓ Validating $workflow"
-            yamllint -d "{extends: default, rules: {line-length: {max: 120}}}" "$workflow"
+            echo "Checking: $workflow"
+            if yamllint -d "{extends: default, rules: {line-length: {max: 120}}}" "$workflow"; then
+              echo "✓ $(basename $workflow) passed yamllint"
+            else
+              echo "❌ ERROR: $(basename $workflow) has YAML syntax errors"
+              errors=1
+            fi
           done
+          exit $errors
 
       - name: Check pyproject.toml syntax
         run: |
-          pip install tomli
-          python -c "import tomli; tomli.load(open('python-project/pyproject.toml', 'rb'))" && echo "✓ pyproject.toml is valid"
+          echo "Validating pyproject.toml..."
+          python -c "import tomli; tomli.load(open('python-project/pyproject.toml', 'rb'))" && \
+            echo "✓ pyproject.toml is valid" || \
+            (echo "❌ ERROR: pyproject.toml has syntax errors" && exit 1)
 
       - name: Validate pre-commit config
         run: |
-          pip install pre-commit
+          echo "Validating pre-commit configuration..."
           cd python-project
-          pre-commit validate-config && echo "✓ pre-commit config is valid"
+          pre-commit validate-config && \
+            echo "✓ pre-commit config is valid" || \
+            (echo "❌ ERROR: pre-commit config is invalid" && exit 1)
 
       - name: Check for standalone workflows (should use reusables)
         run: |
@@ -66,6 +85,7 @@ jobs:
   validate-shell-template:
     name: Validate Shell Template
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     permissions:
       contents: read
 
@@ -73,30 +93,52 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Install yamllint
-        run: pip install yamllint
+      - name: Install validation tools
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y shellcheck
+          pip install --quiet yamllint pre-commit
+          echo "✓ Installed validation tools: shellcheck, yamllint, pre-commit"
 
       - name: Validate workflow YAML syntax
         run: |
           echo "Validating Shell template workflows..."
+          errors=0
           for workflow in shell-project/.github/workflows/*.yml; do
-            echo "✓ Validating $workflow"
-            yamllint -d "{extends: default, rules: {line-length: {max: 120}}}" "$workflow"
+            echo "Checking: $workflow"
+            if yamllint -d "{extends: default, rules: {line-length: {max: 120}}}" "$workflow"; then
+              echo "✓ $(basename $workflow) passed yamllint"
+            else
+              echo "❌ ERROR: $(basename $workflow) has YAML syntax errors"
+              errors=1
+            fi
           done
+          exit $errors
 
       - name: Validate pre-commit config
         run: |
-          pip install pre-commit
+          echo "Validating pre-commit configuration..."
           cd shell-project
-          pre-commit validate-config && echo "✓ pre-commit config is valid"
+          pre-commit validate-config && \
+            echo "✓ pre-commit config is valid" || \
+            (echo "❌ ERROR: pre-commit config is invalid" && exit 1)
 
       - name: Check for shell scripts in template
         run: |
+          echo "Checking for shell scripts in template..."
           if ls shell-project/*.sh 1> /dev/null 2>&1; then
             echo "Found shell scripts in template, running shellcheck..."
+            errors=0
             for script in shell-project/*.sh; do
-              shellcheck "$script" && echo "✓ $script passed shellcheck"
+              echo "Checking: $script"
+              if shellcheck "$script"; then
+                echo "✓ $(basename $script) passed shellcheck"
+              else
+                echo "❌ ERROR: $(basename $script) failed shellcheck"
+                errors=1
+              fi
             done
+            exit $errors
           else
             echo "✓ No shell scripts in template to validate"
           fi
@@ -123,6 +165,7 @@ jobs:
   validate-consistency:
     name: Check Template Consistency
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     permissions:
       contents: read
 
@@ -132,11 +175,24 @@ jobs:
 
       - name: Check both templates have workflow documentation
         run: |
-          test -f python-project/.github/workflows/README.md || \
-            (echo "❌ ERROR: python-project missing .github/workflows/README.md" && exit 1)
-          test -f shell-project/.github/workflows/README.md || \
-            (echo "❌ ERROR: shell-project missing .github/workflows/README.md" && exit 1)
-          echo "✓ Both templates have workflow documentation"
+          echo "Checking for workflow documentation..."
+          errors=0
+
+          if [ -f "python-project/.github/workflows/README.md" ]; then
+            echo "✓ Python template has workflow README"
+          else
+            echo "❌ ERROR: python-project missing .github/workflows/README.md"
+            errors=1
+          fi
+
+          if [ -f "shell-project/.github/workflows/README.md" ]; then
+            echo "✓ Shell template has workflow README"
+          else
+            echo "❌ ERROR: shell-project missing .github/workflows/README.md"
+            errors=1
+          fi
+
+          exit $errors
 
       - name: Check both templates have standard workflows
         run: |
