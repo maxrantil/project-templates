@@ -210,11 +210,13 @@ gh pr create --title "test: validate workflows"
 
 Check all workflows pass:
 - [ ] Shell quality (ShellCheck + shfmt)
+- [ ] CI (if tests present)
 - [ ] Commit format
 - [ ] Session handoff
 - [ ] AI attribution blocking
 - [ ] PR title check
 - [ ] Pre-commit validation
+- [ ] Protect master (branch protection)
 
 ---
 

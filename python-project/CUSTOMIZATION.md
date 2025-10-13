@@ -199,6 +199,7 @@ Check all workflows pass:
 - [ ] AI attribution blocking
 - [ ] PR title check
 - [ ] Pre-commit validation
+- [ ] Protect master (branch protection)
 
 ---
 
