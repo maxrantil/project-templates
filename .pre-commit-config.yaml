@@ -9,3 +9,39 @@ repos:
       - id: check-added-large-files
       - id: check-merge-conflict
       - id: mixed-line-ending
+
+  # Local custom hooks
+  - repo: local
+    hooks:
+      - id: no-ai-attribution
+        name: Block AI/Agent Attribution in Commits
+        entry: bash
+        language: system
+        stages: [pre-commit]
+        pass_filenames: false
+        exclude: '^\.pre-commit-config\.yaml$'
+        args:
+          - -c
+          - |
+            if git diff --cached --diff-filter=ACMR -- ":(exclude).pre-commit-config.yaml" | grep -iE "(Co-authored-by:.*(Claude|GPT|ChatGPT|Copilot|Gemini|Bard|AI)|Generated with.*(Claude|AI|GPT|ChatGPT|Copilot)|claude\.com/claude-code|(reviewed by|validated by|approved by|checked by).*(agent|architecture-designer|security-validator|performance-optimizer|test-automation-qa|code-quality-analyzer|documentation-knowledge-manager|ux-accessibility-i18n-agent|devops-deployment-agent|general-purpose-agent)|agent (review|validation|approval|check))"; then
+              echo ""
+              echo "❌ ERROR: AI/agent attribution detected in staged changes"
+              echo ""
+              echo "Policy: Remove AI tool attributions from commits (per CLAUDE.md)"
+              echo "  ❌ Co-authored-by: Claude/GPT/AI"
+              echo "  ❌ Generated with [AI tool]"
+              echo "  ❌ Agent validation mentions"
+              echo ""
+              echo "✅ Document agent validations in:"
+              echo "  • Session handoff files"
+              echo "  • Implementation documentation"
+              echo "  • PRD/PDR documents"
+              echo ""
+              exit 1
+            fi
+
+      - id: conventional-commit-msg
+        name: Enforce Conventional Commit Format
+        entry: .githooks/check-conventional-commit.py
+        language: system
+        stages: [commit-msg]
