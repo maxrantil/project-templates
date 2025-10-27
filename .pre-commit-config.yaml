@@ -107,7 +107,7 @@ repos:
           - -c
           - |
             # Exclude common documentation and config files
-            EXCLUDES=":(exclude).pre-commit-config.yaml :(exclude).github/ :(exclude)docs/ :(exclude)SESSION*.md :(exclude)*HANDOFF*.md"
+            EXCLUDES=":(exclude).pre-commit-config.yaml :(exclude).github/ :(exclude)docs/ :(exclude)SESSION*.md :(exclude)*HANDOFF*.md :(exclude)test-*.sh :(exclude)test-*.txt"
 
             if git diff --cached --diff-filter=ACMR -- $EXCLUDES | grep "^+" | grep -iE "(Co-authored-by:.*(Claude|GPT|ChatGPT|Copilot|Gemini|Bard|AI)|Generated with.*(Claude|AI|GPT|ChatGPT|Copilot)|claude\\.com/claude-code|(reviewed by|validated by|approved by|checked by).*(agent|architecture-designer|security-validator|performance-optimizer|test-automation-qa|code-quality-analyzer|documentation-knowledge-manager|ux-accessibility-i18n-agent|devops-deployment-agent|general-purpose-agent)|agent (review|validation|approval|check))"; then
               echo ""
@@ -132,23 +132,18 @@ repos:
       - id: no-ai-attribution-commit-msg
         name: Block AI Attribution in Commit Messages
         description: Prevent AI/agent attribution in commit message body
-        entry: bash
+        entry: python3
         language: system
         stages: [commit-msg]
         args:
           - -c
           - |
-            python3 - "$1" << 'PYEOF'
             import sys, re
-
             if len(sys.argv) < 2:
                 print("ERROR: No commit message file provided")
                 sys.exit(1)
-
             with open(sys.argv[1]) as f:
                 msg = f.read()
-
-            # Check for AI attribution patterns
             patterns = [
                 r'Co-authored-by:.*(?:Claude|GPT|ChatGPT|Copilot|Gemini|Bard|AI)',
                 r'Generated with.*(?:Claude|AI|GPT|ChatGPT|Copilot)',
@@ -157,7 +152,6 @@ repos:
                 r'agent (?:review|validation|approval|check)',
                 r'🤖.*(?:Claude|AI|GPT)'
             ]
-
             for pattern in patterns:
                 if re.search(pattern, msg, re.IGNORECASE):
                     print('')
@@ -175,7 +169,6 @@ repos:
                     print('  • PRD/PDR documents')
                     print('')
                     sys.exit(1)
-            PYEOF
 
       # -------------------------------------------------------------------------
       # CONVENTIONAL COMMIT FORMAT VALIDATION
@@ -183,24 +176,19 @@ repos:
       - id: conventional-commit-msg
         name: Enforce Conventional Commit Format
         description: Validate commit messages follow conventional commit format
-        entry: bash
+        entry: python3
         language: system
         stages: [commit-msg]
         args:
           - -c
           - |
-            python3 - "$1" << 'PYEOF'
             import sys, re
-
             if len(sys.argv) < 2:
                 print("ERROR: No commit message file provided")
                 sys.exit(1)
-
             with open(sys.argv[1]) as f:
                 msg = f.read().strip()
-
             pattern = r'^(feat|fix|docs|style|refactor|test|chore|perf|ci|build|revert)(\(.+\))?!?: .+'
-
             if not re.match(pattern, msg):
                 print('❌ ERROR: Commit message must use conventional commit format')
                 print('')
@@ -216,7 +204,6 @@ repos:
                 print('')
                 print('Breaking changes: Add ! after type/scope (e.g., feat!: remove old API)')
                 sys.exit(1)
-            PYEOF
 
       # -------------------------------------------------------------------------
       # CREDENTIALS/SECRETS DETECTION

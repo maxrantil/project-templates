@@ -1,0 +1,39 @@
+=========================================
+Pre-commit Hook Logic Tester
+=========================================
+Version: strong
+
+=== Valid Cases ===
+✅ Test 1: Technical API mention - PASS (expected PASS) [Valid]
+✅ Test 2: Tool name only - PASS (expected PASS) [Valid]
+✅ Test 3: Feature description - PASS (expected PASS) [Valid]
+
+=== Obvious Violations ===
+✅ Test 4: Co-authored-by: Claude - BLOCK (expected BLOCK) [Violation]
+✅ Test 5: Generated with Claude - BLOCK (expected BLOCK) [Violation]
+✅ Test 6: AI assistance - BLOCK (expected BLOCK) [Violation]
+✅ Test 7: Agent mention - BLOCK (expected BLOCK) [Violation]
+
+=== Bypass Attempts ===
+✅ Test 8: Leetspeak: C1aude - BLOCK (expected BLOCK) [Bypass]
+✅ Test 9: Leetspeak: Ch4tGPT - BLOCK (expected BLOCK) [Bypass]
+✅ Test 10: Spacing: C l a u d e - BLOCK (expected BLOCK) [Bypass]
+✅ Test 11: Underscore: C_l_a_u_d_e - BLOCK (expected BLOCK) [Bypass]
+✅ Test 12: Hyphen: C-l-a-u-d-e - BLOCK (expected BLOCK) [Bypass]
+✅ Test 13: Zero sub: C0-auth0red - BLOCK (expected BLOCK) [Bypass]
+✅ Test 14: Multiple leet: C1aud3 - BLOCK (expected BLOCK) [Bypass]
+✅ Test 15: Mixed: Cl4ude spacing - BLOCK (expected BLOCK) [Bypass]
+❌ Test 16: G3m1n1 - PASS (expected BLOCK) [Bypass]
+❌ Test 17: G3_m_1_n_i - PASS (expected BLOCK) [Bypass]
+
+=========================================
+Results Summary
+=========================================
+Version: strong
+Total: 17
+Passed: 15
+Failed: 2
+Success Rate: 88%
+Bypasses blocked: 8
+
+⚠️  2 TESTS FAILED
