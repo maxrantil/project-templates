@@ -215,26 +215,36 @@ repos:
             with open(sys.argv[1]) as f:
                 msg = f.read()
 
-            # Normalize text: replace leetspeak, then remove spaces/special chars
-            # This catches: C1aude -> claude, C l a u d e -> claude, GPT-4 -> gpt
+            # Normalize text: remove zero-width chars, leetspeak, spaces
+            # Catches: C1aude -> claude, C‌l‌a‌u‌d‌e -> claude (zero-width), Clаude -> claude (Cyrillic)
             def normalize(text):
+                # Remove zero-width characters first (invisible separators)
+                zero_width_chars = '\u200b\u200c\u200d\ufeff'
+                for char in zero_width_chars:
+                    text = text.replace(char, '')
+
                 text = text.lower()
-                # Replace leetspeak numbers with letters first
+                # Replace leetspeak numbers with letters
                 replacements = {'1': 'l', '3': 'e', '4': 'a', '0': 'o', '5': 's', '7': 't'}
                 for num, letter in replacements.items():
                     text = text.replace(num, letter)
-                # Then remove spaces, hyphens, underscores
+                # Remove spaces, hyphens, underscores
                 return re.sub(r'[\s_-]', '', text)
 
             # Alternate normalization for Gemini detection (1→i instead of 1→l)
-            # This catches: G3m1n1 -> gemini (where '1' represents 'i')
+            # Catches: G3m1n1 -> gemini (where '1' represents 'i')
             def normalize_with_i(text):
+                # Remove zero-width characters first
+                zero_width_chars = '\u200b\u200c\u200d\ufeff'
+                for char in zero_width_chars:
+                    text = text.replace(char, '')
+
                 text = text.lower()
                 # Replace leetspeak with 1→i for Gemini detection
                 replacements = {'1': 'i', '3': 'e', '4': 'a', '0': 'o', '5': 's', '7': 't'}
                 for num, letter in replacements.items():
                     text = text.replace(num, letter)
-                # Then remove spaces, hyphens, underscores
+                # Remove spaces, hyphens, underscores
                 return re.sub(r'[\s_-]', '', text)
 
             normalized_msg = normalize(msg)
