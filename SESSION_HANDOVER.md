@@ -406,10 +406,14 @@ EOF
 **Post-Merge Validation** (Oct 29, 2025):
 - ✅ project-templates master: Bypass protection working (blocked "G3m1n1")
 - ✅ protonvpn-manager master: Bypass protection working (blocked "C1aude")
+- ✅ vm-infra master: Bypass protection confirmed
+- ✅ dotfiles master: Bypass protection confirmed
+- ✅ maxrantil/.github master: Template updated
+- ✅ textile-showcase master: Bypass protection working (blocked "G3m1n1")
 - ✅ Clean commits pass in all repos
 - ✅ All CI checks passing on master branches
 
-**Validation**: 100% bypass protection confirmed across all 5 repositories (deployment + template)
+**Validation**: 100% bypass protection confirmed across all 6 repositories (deployment + template)
 
 ---
 
