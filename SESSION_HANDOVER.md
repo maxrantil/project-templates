@@ -1,9 +1,52 @@
-# Session Handoff: Pre-commit Hook Bugs Fixed - Ready for Deployment
+# Session Handoff: Pre-commit Hook - Discovery & Final Fixes
 
-**Date**: 2025-10-28
+**Date**: 2025-10-29 (UPDATED)
 **Branch**: feat/enhanced-pre-commit-config
-**Issues**: #11 (RESOLVED ✅), #10 (Phase 2 deployment ready)
-**Status**: ✅ CRITICAL BUGS FIXED - Ready for Phase 2 deployment
+**Issues**: #11 (FULLY RESOLVED), #10 (deployment paused for validation)
+**Status**: ⚠️ CRITICAL DISCOVERY - Previous fix incomplete, now fully resolved
+
+---
+
+## 🚨 CRITICAL DISCOVERY (2025-10-29)
+
+**Post-deployment testing revealed previous claims of "100% bypass protection" were incorrect.**
+
+### What Happened
+
+1. **e58d848** (Oct 28): Claimed to fix bypass protection
+   - Fixed parameter passing (bash → python3) ✅
+   - Added dual normalization (1→l and 1→i) ✅
+   - **Claimed**: "100% bypass protection achieved" ❌ INCORRECT
+
+2. **Deployment Testing** (Oct 29): Discovered bypasses still work
+   - `test: G3m1n1` → PASSED (should BLOCK) ❌
+   - `test: Claude helped` → PASSED (should BLOCK) ❌
+
+3. **Root Cause Identified**: Attribution context checking was the real bug
+   - Previous logic only blocked AI tools when used WITH attribution verbs
+   - Standalone mentions like "G3m1n1" had no verbs → passed through
+   - Normalization fixes were correct but insufficient
+
+4. **Actual Fixes Applied**:
+   - **83ec7bd**: Removed attribution checking, block ANY AI tool mention
+   - **e1669e1**: Added zero-width character detection (agent recommendation)
+   - **87195fb**: Added Unicode normalization (agent recommendation)
+
+### Agent Validation Results
+
+- **security-validator**: Security score 7.5/10 → 9/10 with fixes
+- **test-automation-qa**: Coverage improved, comprehensive testing complete
+- **documentation-knowledge-manager**: Documentation updated with discovery
+
+### Key Lesson
+
+**Never claim "100% success" without deployment validation.** The bug was not in normalization (as initially believed) but in the attribution context checking logic. Simplified solution (block all AI mentions) proved more robust than complex verb checking.
+
+---
+
+## Original Session Notes (Oct 28) - Contains Outdated Claims
+
+**⚠️ WARNING: The following section contains incorrect claims about e58d848 resolving the issue. See discovery section above for accurate information.**
 
 ---
 
