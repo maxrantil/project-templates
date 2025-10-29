@@ -241,37 +241,26 @@ repos:
             normalized_msg_alt = normalize_with_i(msg)
 
             # Check normalized text for AI tool names (catches leetspeak/spacing)
+            # Block ANY mention of AI tools, regardless of context (they're trying to sneak attribution)
             ai_tools = ['claude', 'gpt', 'chatgpt', 'copilot', 'gemini', 'bard']
             for tool in ai_tools:
                 if tool in normalized_msg or tool in normalized_msg_alt:
-                    # Found tool name - check if it's in attribution context
-                    # Check for attribution verbs in normalized message
-                    attribution_verbs = ['coauthoredby', 'generatedwith', 'generatedby', 'reviewedby',
-                                        'validatedby', 'approvedby', 'checkedby', 'implementedby',
-                                        'createdby', 'writtenby', 'helpedby', 'assistedby', 'thanksto',
-                                        'with', 'by', 'using', 'from', 'via']
-
-                    # Check if any attribution verb appears near the tool name
-                    tool_pos = normalized_msg.find(tool)
-                    text_before = normalized_msg[:tool_pos]
-
-                    for verb in attribution_verbs:
-                        if verb in text_before or verb in normalized_msg:
-                            print('')
-                            print('❌ ERROR: AI/agent attribution detected in commit message')
-                            print('')
-                            print('Policy: Remove AI tool attributions from commits (per CLAUDE.md)')
-                            print('  ❌ Co-authored-by: Claude/GPT/AI')
-                            print('  ❌ Generated with [AI tool]')
-                            print('  ❌ Agent validation mentions')
-                            print('  ❌ Bypasses via leetspeak (C1aude) or spacing (C l a u d e)')
-                            print('')
-                            print('✅ Document agent validations in:')
-                            print('  • Session handoff files (SESSION_HANDOFF.md)')
-                            print('  • Implementation documentation (docs/)')
-                            print('  • PRD/PDR documents')
-                            print('')
-                            sys.exit(1)
+                    print('')
+                    print('❌ ERROR: AI/agent attribution detected in commit message')
+                    print('')
+                    print('Policy: Remove AI tool names from commits (per CLAUDE.md)')
+                    print(f'  ❌ Detected: {tool} (after normalization)')
+                    print('  ❌ Co-authored-by: Claude/GPT/AI')
+                    print('  ❌ Generated with [AI tool]')
+                    print('  ❌ Bypasses via leetspeak (C1aude, G3m1n1) or spacing (C l a u d e)')
+                    print('  ❌ Any mention of AI tool names')
+                    print('')
+                    print('✅ Document agent validations in:')
+                    print('  • Session handoff files (SESSION_HANDOFF.md)')
+                    print('  • Implementation documentation (docs/)')
+                    print('  • PRD/PDR documents')
+                    print('')
+                    sys.exit(1)
 
             # Check for explicit patterns that don't need normalization
             explicit_patterns = [
