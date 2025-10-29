@@ -206,7 +206,7 @@ repos:
         args:
           - -c
           - |
-            import sys, re
+            import sys, re, unicodedata
 
             if len(sys.argv) < 2:
                 print("ERROR: No commit message file provided")
@@ -215,10 +215,14 @@ repos:
             with open(sys.argv[1]) as f:
                 msg = f.read()
 
-            # Normalize text: remove zero-width chars, leetspeak, spaces
+            # Normalize text: Unicode, zero-width chars, leetspeak, spaces
             # Catches: C1aude -> claude, C‌l‌a‌u‌d‌e -> claude (zero-width), Clаude -> claude (Cyrillic)
             def normalize(text):
-                # Remove zero-width characters first (invisible separators)
+                # Normalize Unicode to prevent homoglyph attacks (Cyrillic a vs Latin a)
+                text = unicodedata.normalize('NFKD', text)
+                text = text.encode('ascii', 'ignore').decode('ascii')
+
+                # Remove zero-width characters (invisible separators)
                 zero_width_chars = '\u200b\u200c\u200d\ufeff'
                 for char in zero_width_chars:
                     text = text.replace(char, '')
@@ -234,7 +238,11 @@ repos:
             # Alternate normalization for Gemini detection (1→i instead of 1→l)
             # Catches: G3m1n1 -> gemini (where '1' represents 'i')
             def normalize_with_i(text):
-                # Remove zero-width characters first
+                # Normalize Unicode to prevent homoglyph attacks
+                text = unicodedata.normalize('NFKD', text)
+                text = text.encode('ascii', 'ignore').decode('ascii')
+
+                # Remove zero-width characters
                 zero_width_chars = '\u200b\u200c\u200d\ufeff'
                 for char in zero_width_chars:
                     text = text.replace(char, '')
