@@ -294,4 +294,125 @@ gh pr create --title "chore: upgrade pre-commit hooks with bypass protection" \
 
 ---
 
-**Ready for handoff to next session. All bugs fixed, validation complete, deployment ready.**
+---
+
+## 🚀 Next Session Priorities (UPDATED 2025-10-29)
+
+**CRITICAL**: Previous session thought deployment was ready but discovered bugs during validation. Current session fixed all issues and validated with agents. NOW READY FOR ACTUAL DEPLOYMENT.
+
+### Deployment Checklist (Use CORRECT fixed config)
+
+**Config to deploy**: `/home/mqx/workspace/project-templates/.pre-commit-config.yaml` (commit 87195fb)
+
+**Contains ALL fixes**:
+- 83ec7bd: Block ANY AI mention (removed attribution checking)
+- e1669e1: Zero-width character detection
+- 87195fb: Unicode normalization
+
+**Deployment targets** (in order):
+1. **protonvpn-manager** - Branch `chore/upgrade-pre-commit-hooks` exists
+2. **vm-infra** - Create branch, copy config
+3. **dotfiles** - Create branch, copy config
+4. **maxrantil/.github** - Update centralized template
+
+**Per-project steps**:
+```bash
+# Copy fixed config (preserve project-specific settings)
+cp /path/to/project-templates/.pre-commit-config.yaml config/.pre-commit-config.yaml
+
+# Update ABOUTME header for project
+# Add project-specific excludes if needed
+# Test bypass protection
+git commit --allow-empty -m "chore: upgrade pre-commit hooks with bypass fixes"
+
+# Create PR
+gh pr create --title "chore: upgrade pre-commit hooks" \
+  --body "Upgrades from project-templates with 3 critical security fixes"
+```
+
+### Documentation Tasks
+
+1. **Add comment to Issue #11**:
+   - Note e58d848 was incomplete
+   - Reference actual fixes (83ec7bd, e1669e1, 87195fb)
+   - Explain discovery process
+   - Mark as fully resolved
+
+2. **Create LESSONS-LEARNED**:
+   - File: `docs/implementation/LESSONS-LEARNED-issue-11-bypass-bug.md`
+   - Document premature success claims
+   - Explain real vs perceived root cause
+   - Key takeaway: validate before claiming success
+
+3. **Update Issue #10**:
+   - Note deployment paused for validation
+   - Reference agent validation results
+   - Update with actual deployment progress
+
+### PR Creation
+
+After all deployments complete:
+```bash
+# In project-templates
+git push origin feat/enhanced-pre-commit-config
+
+gh pr create --title "feat: add comprehensive AI attribution bypass protection" \
+  --body "$(cat <<'EOF'
+## Summary
+- Fixed critical bug in pre-commit hook bypass protection
+- Added zero-width character detection
+- Added Unicode normalization for homoglyph attacks
+- Achieved enterprise-grade security (9/10 security score)
+
+## Root Cause Discovery
+Initial fix (e58d848) was incomplete. Real bug was attribution context checking, not normalization. Simplified approach (block ALL AI mentions) proved more robust.
+
+## Agent Validations
+- ✅ security-validator: 9/10 score
+- ✅ test-automation-qa: Comprehensive coverage
+- ✅ documentation-knowledge-manager: Accurate documentation
+
+## Testing
+All bypass patterns now blocked, clean commits pass.
+
+## Deployments
+- protonvpn-manager
+- vm-infra
+- dotfiles
+- maxrantil/.github
+EOF
+)"
+```
+
+---
+
+## 📝 Startup Prompt for Next Session
+
+```
+Read CLAUDE.md to understand our workflow, then deploy validated pre-commit hook fixes to other projects.
+
+**Immediate priority**: Deploy to protonvpn-manager, vm-infra, dotfiles (2-3 hours)
+**Critical context**: Previous session discovered e58d848 didn't actually fix bypasses. Real fixes now validated and ready.
+**Achievement**: Found real root cause (attribution checking), applied 3 security fixes, validated by 3 agents
+**Fixed config**: /home/mqx/workspace/project-templates/.pre-commit-config.yaml (commit 87195fb)
+**Reference docs**:
+  • SESSION_HANDOVER.md (THIS FILE - discovery timeline and deployment instructions)
+  • Issue #11 (needs comment about discovery)
+  • Issue #10 (Phase 2 deployment tracking)
+**Ready state**: Clean branch (feat/enhanced-pre-commit-config), all fixes committed, agents validated
+
+**Expected scope**:
+1. Deploy to protonvpn-manager (branch exists, copy CORRECT config)
+2. Deploy to vm-infra (create branch, copy config)
+3. Deploy to dotfiles (create branch, copy config)
+4. Update maxrantil/.github centralized template
+5. Add discovery comment to Issue #11
+6. Create LESSONS-LEARNED document
+7. Update and close Issue #10
+8. Create PR for feat/enhanced-pre-commit-config
+9. Final session handoff
+```
+
+---
+
+**Ready for next session. Fixes validated, deployment instructions clear, accurate historical record maintained.**
