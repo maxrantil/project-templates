@@ -14,6 +14,7 @@ This directory contains automated workflows that enforce project standards and q
 | `commit-format.yml` | Validates all commits follow conventional format | ✅ Yes | ~10s |
 | `block-ai-attribution.yml` | Detects AI/agent attribution in commits | ✅ Yes | ~10s |
 | `verify-session-handoff.yml` | Ensures session handoff documentation exists | ✅ Yes | ~8s |
+| `secret-scan.yml` | Scans for accidentally committed secrets (API keys, tokens, passwords) | ✅ Yes | ~7s |
 | `ci.yml` | Executes full test suite (pytest) | ✅ Yes | ~2min |
 | `pre-commit-validation.yml` | Runs all pre-commit hooks | ✅ Yes | ~45s |
 
@@ -22,6 +23,7 @@ This directory contains automated workflows that enforce project standards and q
 | Workflow | Purpose | Blocks Push? | Runtime |
 |----------|---------|--------------|---------|
 | `protect-master.yml` | Blocks direct pushes to master (only allows PR merges) | ✅ Yes | ~5s |
+| `secret-scan.yml` | Scans for accidentally committed secrets (API keys, tokens, passwords) | ✅ Yes | ~7s |
 
 ## Conventional Commit Format
 
