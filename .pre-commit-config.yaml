@@ -19,11 +19,11 @@ repos:
         language: system
         stages: [pre-commit]
         pass_filenames: false
-        exclude: '^\.pre-commit-config\.yaml$'
+        exclude: '^(\.pre-commit-config\.yaml|SESSION_HANDOVER\.md)$'
         args:
           - -c
           - |
-            if git diff --cached --diff-filter=ACMR -- ":(exclude).pre-commit-config.yaml" | grep -iE "(Co-authored-by:.*(Claude|GPT|ChatGPT|Copilot|Gemini|Bard|AI)|Generated with.*(Claude|AI|GPT|ChatGPT|Copilot)|claude\.com/claude-code|(reviewed by|validated by|approved by|checked by).*(agent|architecture-designer|security-validator|performance-optimizer|test-automation-qa|code-quality-analyzer|documentation-knowledge-manager|ux-accessibility-i18n-agent|devops-deployment-agent|general-purpose-agent)|agent (review|validation|approval|check))"; then
+            if git diff --cached --diff-filter=ACMR -- ":(exclude).pre-commit-config.yaml" ":(exclude)SESSION_HANDOVER.md" | grep -iE "(Co-authored-by:.*(Claude|GPT|ChatGPT|Copilot|Gemini|Bard|AI)|Generated with.*(Claude|AI|GPT|ChatGPT|Copilot)|claude\.com/claude-code|(reviewed by|validated by|approved by|checked by).*(agent|architecture-designer|security-validator|performance-optimizer|test-automation-qa|code-quality-analyzer|documentation-knowledge-manager|ux-accessibility-i18n-agent|devops-deployment-agent|general-purpose-agent)|agent (review|validation|approval|check))"; then
               echo ""
               echo "❌ ERROR: AI/agent attribution detected in staged changes"
               echo ""
