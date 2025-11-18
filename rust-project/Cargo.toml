@@ -1,0 +1,23 @@
+# ABOUTME: Cargo manifest for Rust project template
+[package]
+name = "project-name"  # TODO: Replace with your project name
+version = "0.1.0"
+edition = "2021"
+authors = ["Your Name <your.email@example.com>"]  # TODO: Replace with your info
+description = "PROJECT_DESCRIPTION"  # TODO: Add project description
+license = "MIT"  # TODO: Choose appropriate license
+repository = "https://github.com/username/project-name"  # TODO: Update repository URL
+
+[dependencies]
+# Add your dependencies here
+
+[dev-dependencies]
+# Development dependencies
+
+[[bin]]
+name = "project-name"  # TODO: Replace with your binary name
+path = "src/main.rs"
+
+[lib]
+name = "project_name"  # TODO: Replace with your library name (use snake_case)
+path = "src/lib.rs"

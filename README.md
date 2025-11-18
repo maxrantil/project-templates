@@ -41,6 +41,29 @@ git init
 # Add your scripts
 ```
 
+### Rust Project
+Complete Rust project setup with:
+- GitHub Actions CI (tests, clippy, rustfmt, cargo audit)
+- Pre-commit hooks configuration
+- Cargo workspace configuration
+- Binary and library templates
+- Comprehensive quality checks
+- Standard .gitignore
+
+**Usage:**
+```bash
+# Using GitHub CLI (recommended)
+gh repo create my-rust-project --template maxrantil/project-templates --private
+cd my-rust-project
+# Customize Cargo.toml and source files
+
+# Or manually
+cp -r rust-project/* my-rust-project/
+cd my-rust-project
+git init
+# Customize Cargo.toml, src/main.rs, src/lib.rs
+```
+
 ### Centralized Workflows
 All templates now use centralized reusable workflows from the [maxrantil/.github](https://github.com/maxrantil/.github) repository.
 
@@ -65,10 +88,12 @@ After copying a template:
 1. **Update project metadata**
    - Python: Edit `pyproject.toml` (name, version, description, author)
    - Shell: Edit `README.md`
+   - Rust: Edit `Cargo.toml` (name, version, description, authors)
 
 2. **Install dependencies**
    - Python: `pip install -e ".[dev]"`
    - Shell: `pre-commit install` (if using pre-commit)
+   - Rust: `cargo build && pre-commit install`
 
 3. **Initialize git**
    ```bash
@@ -121,11 +146,19 @@ The `.github/workflows/validate-templates.yml` workflow runs comprehensive check
 - ✅ Reusable workflow usage verification
 - ✅ Branch reference compliance (@master)
 
+**Rust Template Validation:**
+- ✅ YAML syntax validation (yamllint)
+- ✅ Cargo.toml syntax validation
+- ✅ Pre-commit config validation
+- ✅ ABOUTME headers in workflows
+- ✅ Reusable workflow usage verification
+- ✅ Branch reference compliance (@master)
+
 **Consistency Checks:**
-- ✅ Both templates have workflow documentation (README.md)
-- ✅ Both templates have pre-commit configs
-- ✅ Both templates have README files
-- ✅ Standard workflows present in both templates
+- ✅ All templates have workflow documentation (README.md)
+- ✅ All templates have pre-commit configs
+- ✅ All templates have README files
+- ✅ Standard workflows present in all templates
 
 ### Benefits
 
@@ -177,6 +210,29 @@ project-templates/
 │   ├── .gitignore
 │   ├── README.md
 │   └── example-script.sh
+├── rust-project/                      # Rust template
+│   ├── .github/workflows/
+│   │   ├── ci.yml                    # Cargo test, clippy, fmt
+│   │   ├── rust-quality.yml          # Comprehensive quality checks
+│   │   ├── commit-format.yml         # Uses conventional-commit-check-reusable
+│   │   ├── verify-session-handoff.yml # Uses session-handoff-check-reusable
+│   │   ├── block-ai-attribution.yml
+│   │   ├── pr-title-check.yml
+│   │   ├── pre-commit-validation.yml
+│   │   ├── protect-master.yml
+│   │   └── secret-scan.yml
+│   ├── src/
+│   │   ├── main.rs                   # Binary entry point
+│   │   └── lib.rs                    # Library code
+│   ├── tests/
+│   │   └── integration_test.rs       # Integration tests
+│   ├── scripts/
+│   │   └── setup-github-protection.sh
+│   ├── .pre-commit-config.yaml
+│   ├── .gitignore
+│   ├── Cargo.toml
+│   ├── README.md
+│   └── CUSTOMIZATION.md
 └── Centralized workflows → https://github.com/maxrantil/.github
 ```
 
@@ -185,11 +241,12 @@ project-templates/
 **✅ Completed:**
 1. ✅ Python template: Full CI/CD using centralized workflows
 2. ✅ Shell template: ShellCheck + shfmt using centralized workflows
-3. ✅ Shared workflows: Migrated to maxrantil/.github repository
-4. ✅ Workflow reduction: Achieved 50%+ reduction in duplicated code
+3. ✅ Rust template: Cargo test, clippy, fmt, audit using quality workflows
+4. ✅ Shared workflows: Migrated to maxrantil/.github repository
+5. ✅ Workflow reduction: Achieved 50%+ reduction in duplicated code
 
 **Future Enhancements:**
-1. Add more language templates (Rust, Go, TypeScript, etc.)
+1. Add more language templates (Go, TypeScript, etc.)
 2. Create workflow templates for Docker/container workflows
 3. Add database migration workflow templates
 4. Extract deployment patterns from production projects

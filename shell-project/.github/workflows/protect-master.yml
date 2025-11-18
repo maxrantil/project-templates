@@ -9,4 +9,7 @@ on:
 
 jobs:
   block-direct-push:
+    permissions:
+      contents: read
+      pull-requests: read
     uses: maxrantil/.github/.github/workflows/protect-master-reusable.yml@master

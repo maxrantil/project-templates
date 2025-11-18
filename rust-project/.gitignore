@@ -1,0 +1,36 @@
+# ABOUTME: Git ignore patterns for Rust projects
+
+# Rust build artifacts
+/target/
+**/*.rs.bk
+*.pdb
+
+# Cargo lock file (include for applications, exclude for libraries)
+# Uncomment if this is a library:
+# Cargo.lock
+
+# IDE files
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Environment files
+.env
+.env.local
+
+# Test coverage
+*.profraw
+*.profdata
+
+# Documentation
+/doc/
+
+# Session management (CLAUDE.md workflow)
+CLAUDE.md
+docs/implementation/SESSION-*.md
