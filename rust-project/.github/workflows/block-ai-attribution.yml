@@ -1,0 +1,12 @@
+# ABOUTME: Detects and blocks AI tool attribution in commits (per CLAUDE.md)
+name: Block AI Attribution
+
+on:
+  pull_request:
+    branches:
+      - master
+      - main
+
+jobs:
+  check-attribution:
+    uses: maxrantil/.github/.github/workflows/block-ai-attribution-reusable.yml@master

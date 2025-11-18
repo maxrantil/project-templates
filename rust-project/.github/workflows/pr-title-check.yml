@@ -1,0 +1,13 @@
+# ABOUTME: Validates PR titles follow conventional commit format
+name: PR Title Check
+
+on:
+  pull_request:
+    types: [opened, edited, synchronize]
+    branches:
+      - master
+      - main
+
+jobs:
+  check-title:
+    uses: maxrantil/.github/.github/workflows/pr-title-check-reusable.yml@master

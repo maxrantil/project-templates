@@ -1,0 +1,12 @@
+# ABOUTME: Blocks direct pushes to master branch (only allows PR merges)
+name: Protect Master Branch
+
+on:
+  push:
+    branches:
+      - master
+      - main
+
+jobs:
+  block-direct-push:
+    uses: maxrantil/.github/.github/workflows/protect-master-reusable.yml@master

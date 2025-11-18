@@ -1,0 +1,74 @@
+# ABOUTME: Pre-commit hooks configuration for Rust projects
+# ABOUTME: Ensures code quality, formatting, and policy compliance
+
+repos:
+  # General file checks
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.4.0
+    hooks:
+      - id: trailing-whitespace
+      - id: end-of-file-fixer
+      - id: check-yaml
+      - id: check-added-large-files
+        args: ['--maxkb=500']
+      - id: check-case-conflict
+      - id: check-merge-conflict
+      - id: check-toml
+
+  # Rust-specific hooks
+  - repo: local
+    hooks:
+      - id: cargo-fmt
+        name: Cargo Format Check
+        entry: cargo fmt --
+        language: system
+        types: [rust]
+        pass_filenames: false
+
+      - id: cargo-clippy
+        name: Cargo Clippy
+        entry: cargo clippy --all-targets --all-features -- -D warnings
+        language: system
+        types: [rust]
+        pass_filenames: false
+
+      # Policy enforcement hooks
+      - id: no-ai-attribution
+        name: Block AI/Agent Attribution in Commits
+        entry: bash
+        language: system
+        stages: [pre-commit]
+        args:
+          - -c
+          - |
+            if git diff --cached --diff-filter=ACMR -- \
+              ":(exclude).github/" \
+              ":(exclude).pre-commit-config.yaml" \
+              ":(exclude).gitignore" \
+              ":(exclude)docs/" \
+              ":(exclude)SESSION_HANDOFF.md" \
+              ":(exclude)*HANDOFF*.md" \
+              ":(exclude)*SESSION*.md" | \
+              grep -iE "(Co-authored-by|Generated with|Claude|AI-generated|Created by Claude)"; then
+              echo "❌ ERROR: Remove AI/agent attribution from commits (per CLAUDE.md)"
+              exit 1
+            fi
+
+      - id: conventional-commit-msg
+        name: Enforce Conventional Commit Format
+        entry: python3 -c
+        language: system
+        stages: [commit-msg]
+        args:
+          - |
+            import sys, re
+            with open(sys.argv[1]) as f:
+                msg = f.read().strip()
+            pattern = r'^(feat|fix|docs|style|refactor|test|chore|perf|ci|build|revert)(\(.+\))?!?: .+'
+            if not re.match(pattern, msg):
+                print('❌ ERROR: Use conventional commit format')
+                print('Examples:')
+                print('  feat(api): add new endpoint')
+                print('  fix(auth): resolve token issue')
+                print('  docs: update README')
+                sys.exit(1)
