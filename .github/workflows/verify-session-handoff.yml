@@ -10,6 +10,8 @@ on:
 
 jobs:
   check-handoff:
+    permissions:
+      contents: read
     uses: maxrantil/.github/.github/workflows/session-handoff-check-reusable.yml@master
     with:
       base-branch: 'master'

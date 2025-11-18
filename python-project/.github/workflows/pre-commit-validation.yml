@@ -9,4 +9,6 @@ on:
 
 jobs:
   run-pre-commit:
+    permissions:
+      contents: read
     uses: maxrantil/.github/.github/workflows/pre-commit-check-reusable.yml@master
