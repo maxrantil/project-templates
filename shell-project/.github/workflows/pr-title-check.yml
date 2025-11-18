@@ -10,4 +10,6 @@ on:
 
 jobs:
   check-title:
+    permissions:
+      pull-requests: read
     uses: maxrantil/.github/.github/workflows/pr-title-check-reusable.yml@master
